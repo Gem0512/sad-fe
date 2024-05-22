@@ -21,7 +21,7 @@ export default function CardMobile({book, handleDeleteCate, handleOpen, handleOp
         component="img"
         alt="green iguana"
         height="140"
-        image= "https://dongphuc.dony.vn/wp-content/uploads/2021/02/ao-thun-tay-dai-nu-6.jpg"
+        image= {book.image_base64}
       />
       <CardContent>
         <Typography gutterBottom variant="h5" component="div">
@@ -38,7 +38,7 @@ export default function CardMobile({book, handleDeleteCate, handleOpen, handleOp
         display:'flex',
         justifyContent: 'flex-end'
       }}>
-        <Button size="small" onClick={()=>{handleOpen(book.id)}}>Detail</Button>
+        {/* <Button size="small" onClick={()=>{handleOpen(book.id)}}>Detail</Button> */}
        {role ===" manager" && (
         <Box>
         <Button size="small" onClick={()=>{handleOpen1(book.id)}}>Edit</Button>
@@ -47,7 +47,7 @@ export default function CardMobile({book, handleDeleteCate, handleOpen, handleOp
        )}
         {
             role === 'user' && (
-                <Button size="small" onClick ={()=>{handleOpen1(book.id)}}>
+                <Button size="small" onClick ={()=>{handleOpen(book.id)}}>
                     <AddShoppingCartIcon></AddShoppingCartIcon>
                 </Button>
             )

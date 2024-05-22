@@ -1,61 +1,107 @@
-import { Box, Button, InputBase, TextField, Typography, alpha, styled } from '@mui/material';
+import { Box, Button, FormControl, Input, InputBase, InputLabel, MenuItem, Select, TextField, Typography, alpha, styled } from '@mui/material';
 import React, { useEffect, useState } from 'react'
 import Header from '../Header';
-
+import SearchIcon from '@mui/icons-material/Search';
+import axios from 'axios';
 
 
 export default function AddMobile() {
     const [formData, setFormData] = useState({
-        // category_id: '',
-        name:'',
-        price:'',
+        name: '',
+        price: '',
+        quantity: '',
         description: '',
-        branch: '',
-        quantity:''
+        producer: '',
+        type: '',
+        image:null
       });
     
       const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
-      };
+        const { name, value, files } = e.target;
+        const intFields = ['quantity', 'producer', 'type'];
+        let parsedValue = value;
 
+        if (name === 'image') {
+          parsedValue = files[0]; // Handle file input for image
+        } else if (intFields.includes(name)) {
+          parsedValue = parseInt(value, 10);
+        } else if (name === 'price') {
+          parsedValue = parseFloat(value);
+        }
 
-    
+        setFormData({ ...formData, [name]: parsedValue });
+
+        console.log(name, value)
+      }; 
       const handleSubmit = async (e) => {
         e.preventDefault();
-
-        console.log("formData", formData)
         const accessToken = localStorage.getItem('accessToken');
-        try {
-            const response = await fetch('http://localhost:8005/api/mobiles/', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${accessToken}`
-              },
-              body: JSON.stringify(formData)
-            });
-        
-            if (!response.ok) {
-              throw new Error('Network response was not ok');
+
+        console.log('formData', formData);
+
+        const config = {     
+            headers: { 
+              'content-type': 'multipart/form-data',
+              'Authorization': `Bearer ${accessToken}`
             }
-        
-            const responseData = await response.json();
-            console.log('Mobile added successfully:', responseData);
-            setFormData({
-                name:'',
-                price:'',
-                description: '',
-                branch: '',
-                quantity:''
-              });
-              alert("Thêm Mobile thành công!")
-          } catch (error) {
-            console.error('Error adding mobile:', error);
-          }
+        }
+
+        axios.post('http://localhost:8005/api/mobiles/', formData, config)
+            .then(response => {
+                console.log(response);
+                alert("Thêm điện thoại thành công!");
+                setFormData({
+                  name: '',
+                  price: '',
+                  quantity: '',
+                  description: '',
+                  producer: '',
+                  type: '',
+                  image:null
+                })
+            })
+            .catch(error => {
+                console.log(error);
+            });
       };
 
   
+      const [dataCate, setDataCate] = useState();
+      useEffect(() => {
+        
+        fetchData();
+        fetchData1()
+        
+      }, []);
+    const fetchData = async () => {
+          try {
+            const response = await fetch('http://localhost:8005/api/producers/');
+            const responseData = await response.json();
+            setDataCate(responseData);
+            console.log(responseData);
+          } catch (error) {
+            console.error('Error fetching data:', error);
+          }
+        };
+
+        const [dataPub, setDataPub] = useState();
+        const fetchData1 = async () => {
+              try {
+                const response = await fetch('http://localhost:8005/api/types/');
+                const responseData = await response.json();
+                setDataPub(responseData);
+                console.log(responseData);
+              } catch (error) {
+                console.error('Error fetching data:', error);
+              }
+            };
+
+
+            // const [cate, setCate] = React.useState('');
+
+  // const handleChangeCate = (event) => {
+  //   setCate(event.target.value);
+  // };
 
   return (
     <Box style={{
@@ -71,7 +117,7 @@ export default function AddMobile() {
         marginTop: 30,
         color:'#008DDA',
         fontWeight: 'bold'
-      }}>Thêm Mobile</Typography>
+      }}>Thêm Mobiles</Typography>
       <Box style={{
         // width:400,
         // maxWidth: 500,
@@ -83,29 +129,57 @@ export default function AddMobile() {
        <form onSubmit={handleSubmit} style={{
         maxWidth: 800,
        }}>
-      
+
+
       <TextField
-        style={{
-                backgroundColor: 'white',
-            }}
         fullWidth
         label="Name"
         variant="outlined"
         name="name"
+        style={{
+            backgroundColor: 'white',
+        }}
         value={formData.name}
         onChange={handleChange}
         margin="normal"
       />
-      <TextField
+      {/* <TextField
+        fullWidth
+        label="Size"
+        variant="outlined"
+        name="size"
         style={{
-                backgroundColor: 'white',
-            }}
+            backgroundColor: 'white',
+        }}
+        value={formData.size}
+        onChange={handleChange}
+        margin="normal"
+      /> */}
+
+
+      <TextField
         fullWidth
         label="Price"
-        type ='number'
         variant="outlined"
+        type="number"
         name="price"
+        style={{
+            backgroundColor: 'white',
+        }}
         value={formData.price}
+        onChange={handleChange}
+        margin="normal"
+      />
+      <TextField
+        fullWidth
+        label="Quantity"
+        variant="outlined"
+        type="number"
+        name="quantity"
+        style={{
+            backgroundColor: 'white',
+        }}
+        value={formData.quantity}
         onChange={handleChange}
         margin="normal"
       />
@@ -123,37 +197,60 @@ export default function AddMobile() {
         onChange={handleChange}
         margin="normal"
       />
-      <TextField
-        fullWidth
-        label="Branch"
-        variant="outlined"
-        type ='number'
-        multiline
-        rows={4}
-        style={{
-            backgroundColor: 'white',
-        }}
-        name="branch"
-        value={formData.branch}
-        onChange={handleChange}
-        margin="normal"
-      />
-      <TextField
-        fullWidth
-        label="Quantity"
-        variant="outlined"
-        type ='number'
-        multiline
-        rows={4}
-        style={{
-            backgroundColor: 'white',
-        }}
-        name="quantity"
-        value={formData.quantity}
-        onChange={handleChange}
-        margin="normal"
-      />
-      
+      <FormControl fullWidth margin="normal">
+        <InputLabel id="demo-simple-select-label">Producer</InputLabel>
+        <Select
+          labelId="demo-simple-select-label"
+          id="demo-simple-select"
+          value={formData.producer}
+          name ='producer'
+          style={{
+                backgroundColor: 'white',
+            }}
+          label="Producer"
+          onChange={handleChange}
+        >
+        {
+          dataCate && dataCate.map(cate => (
+            <MenuItem value={cate.id}>{cate.name}</MenuItem>
+          ))
+        }
+        </Select>
+      </FormControl>
+      <FormControl fullWidth margin="normal">
+        <InputLabel id="demo-simple-select-label">Type</InputLabel>
+        <Select
+          labelId="demo-simple-select-label"
+          id="demo-simple-select"
+          name ='type'
+          value={formData.type}
+          style={{
+                backgroundColor: 'white',
+            }}
+          label="Type"
+          onChange={handleChange}
+        >
+        {
+          dataPub && dataPub.map(cate => (
+            <MenuItem value={cate.id}>{cate.name}</MenuItem>
+          ))
+        }
+        </Select>
+      </FormControl>
+        
+      <FormControl variant="standard" margin ="normal">
+        <InputLabel htmlFor="image-input">
+          Chọn hình ảnh
+        </InputLabel>
+        <Input
+          id="image-input"
+          name="image"
+          type="file"
+          onChange={handleChange}
+        />
+      </FormControl>
+
+
       <Button 
       style={{
         marginTop: 20,

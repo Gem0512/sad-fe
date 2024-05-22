@@ -1,63 +1,109 @@
-import { Box, Button, InputBase, TextField, Typography, alpha, styled } from '@mui/material';
+import { Box, Button, FormControl, Input, InputBase, InputLabel, MenuItem, Select, TextField, Typography, alpha, styled } from '@mui/material';
 import React, { useEffect, useState } from 'react'
 import Header from '../Header';
-
+import SearchIcon from '@mui/icons-material/Search';
+import axios from 'axios';
 
 
 export default function AddClothes() {
     const [formData, setFormData] = useState({
-        // category_id: '',
-        name:'',
-        price:'',
-        size:'',
+        name: '',
+        size: '',
+        price: '',
+        quantity: '',
         description: '',
-        branch: '',
-        category:''
+        producer: '',
+        styles: '',
+        image:null
       });
     
       const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
-      };
+        const { name, value, files } = e.target;
+        const intFields = ['quantity', 'producer', 'styles'];
+        let parsedValue = value;
 
+        if (name === 'image') {
+          parsedValue = files[0]; // Handle file input for image
+        } else if (intFields.includes(name)) {
+          parsedValue = parseInt(value, 10);
+        } else if (name === 'price') {
+          parsedValue = parseFloat(value);
+        }
 
-    
+        setFormData({ ...formData, [name]: parsedValue });
+
+        console.log(name, value)
+      }; 
       const handleSubmit = async (e) => {
         e.preventDefault();
-
-        console.log("formData", formData)
         const accessToken = localStorage.getItem('accessToken');
-        try {
-            const response = await fetch('http://localhost:8003/api/clothes/', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${accessToken}`
-              },
-              body: JSON.stringify(formData)
-            });
-        
-            if (!response.ok) {
-              throw new Error('Network response was not ok');
+
+        console.log('formData', formData);
+
+        const config = {     
+            headers: { 
+              'content-type': 'multipart/form-data',
+              'Authorization': `Bearer ${accessToken}`
             }
-        
-            const responseData = await response.json();
-            console.log('Clothes added successfully:', responseData);
-            setFormData({
-                name:'',
-                price:'',
-                size:'',
-                description: '',
-                branch: '',
-                category:''
-              });
-              alert("Thêm quần áo thành công!")
-          } catch (error) {
-            console.error('Error adding book:', error);
-          }
+        }
+
+        axios.post('http://localhost:8003/api/clothes/', formData, config)
+            .then(response => {
+                console.log(response);
+                alert("Thêm sách thành công!");
+                setFormData({
+                  name: '',
+                  size: '',
+                  price: '',
+                  quantity: '',
+                  description: '',
+                  producer: '',
+                  styles: '',
+                  image:null
+                })
+            })
+            .catch(error => {
+                console.log(error);
+            });
       };
 
   
+      const [dataCate, setDataCate] = useState();
+      useEffect(() => {
+        
+        fetchData();
+        fetchData1()
+        
+      }, []);
+    const fetchData = async () => {
+          try {
+            const response = await fetch('http://localhost:8003/api/producers/');
+            const responseData = await response.json();
+            setDataCate(responseData);
+            console.log(responseData);
+          } catch (error) {
+            console.error('Error fetching data:', error);
+          }
+        };
+
+        const [dataPub, setDataPub] = useState();
+        const fetchData1 = async () => {
+              try {
+                const response = await fetch('http://localhost:8003/api/styles/');
+                const responseData = await response.json();
+                setDataPub(responseData);
+                console.log(responseData);
+              } catch (error) {
+                console.error('Error fetching data:', error);
+              }
+            };
+
+
+            // const [cate, setCate] = React.useState('');
+
+  // const handleChangeCate = (event) => {
+  //   setCate(event.target.value);
+  // };
 
   return (
     <Box style={{
@@ -85,29 +131,17 @@ export default function AddClothes() {
        <form onSubmit={handleSubmit} style={{
         maxWidth: 800,
        }}>
-      
+
+
       <TextField
-        style={{
-                backgroundColor: 'white',
-            }}
         fullWidth
         label="Name"
         variant="outlined"
         name="name"
-        value={formData.name}
-        onChange={handleChange}
-        margin="normal"
-      />
-      <TextField
         style={{
-                backgroundColor: 'white',
-            }}
-        fullWidth
-        label="Price"
-        type ='number'
-        variant="outlined"
-        name="price"
-        value={formData.price}
+            backgroundColor: 'white',
+        }}
+        value={formData.name}
         onChange={handleChange}
         margin="normal"
       />
@@ -115,13 +149,39 @@ export default function AddClothes() {
         fullWidth
         label="Size"
         variant="outlined"
-        multiline
-        rows={4}
+        name="size"
         style={{
             backgroundColor: 'white',
         }}
-        name="size"
         value={formData.size}
+        onChange={handleChange}
+        margin="normal"
+      />
+
+
+      <TextField
+        fullWidth
+        label="Price"
+        variant="outlined"
+        type="number"
+        name="price"
+        style={{
+            backgroundColor: 'white',
+        }}
+        value={formData.price}
+        onChange={handleChange}
+        margin="normal"
+      />
+      <TextField
+        fullWidth
+        label="Quantity"
+        variant="outlined"
+        type="number"
+        name="quantity"
+        style={{
+            backgroundColor: 'white',
+        }}
+        value={formData.quantity}
         onChange={handleChange}
         margin="normal"
       />
@@ -139,37 +199,60 @@ export default function AddClothes() {
         onChange={handleChange}
         margin="normal"
       />
-      <TextField
-        fullWidth
-        label="Branch"
-        variant="outlined"
-        type ='number'
-        multiline
-        rows={4}
-        style={{
-            backgroundColor: 'white',
-        }}
-        name="branch"
-        value={formData.branch}
-        onChange={handleChange}
-        margin="normal"
-      />
-      <TextField
-        fullWidth
-        label="Category"
-        variant="outlined"
-        type ='number'
-        multiline
-        rows={4}
-        style={{
-            backgroundColor: 'white',
-        }}
-        name="category"
-        value={formData.category}
-        onChange={handleChange}
-        margin="normal"
-      />
-      
+      <FormControl fullWidth margin="normal">
+        <InputLabel id="demo-simple-select-label">Producer</InputLabel>
+        <Select
+          labelId="demo-simple-select-label"
+          id="demo-simple-select"
+          value={formData.producer}
+          name ='producer'
+          style={{
+                backgroundColor: 'white',
+            }}
+          label="Producer"
+          onChange={handleChange}
+        >
+        {
+          dataCate && dataCate.map(cate => (
+            <MenuItem value={cate.id}>{cate.name}</MenuItem>
+          ))
+        }
+        </Select>
+      </FormControl>
+      <FormControl fullWidth margin="normal">
+        <InputLabel id="demo-simple-select-label">Styles</InputLabel>
+        <Select
+          labelId="demo-simple-select-label"
+          id="demo-simple-select"
+          name ='styles'
+          value={formData.styles}
+          style={{
+                backgroundColor: 'white',
+            }}
+          label="Styles"
+          onChange={handleChange}
+        >
+        {
+          dataPub && dataPub.map(cate => (
+            <MenuItem value={cate.id}>{cate.name}</MenuItem>
+          ))
+        }
+        </Select>
+      </FormControl>
+        
+      <FormControl variant="standard" margin ="normal">
+        <InputLabel htmlFor="image-input">
+          Chọn hình ảnh
+        </InputLabel>
+        <Input
+          id="image-input"
+          name="image"
+          type="file"
+          onChange={handleChange}
+        />
+      </FormControl>
+
+
       <Button 
       style={{
         marginTop: 20,

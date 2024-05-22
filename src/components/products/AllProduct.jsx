@@ -109,21 +109,29 @@ const fetchData = async () => {
   const [searchResults, setSearchResults] = useState(null);
 
   const handleKeyPress = async (event) => {
-    if (event.key === 'Enter' && searchTerm !=='') {
+    console.log("searchTerm", searchTerm);
+    if (event.key === 'Enter' && searchTerm !== '') {
       console.log('Enter key pressed. Search term:', searchTerm);
       try {
-        const response = await fetch(`http://127.0.0.1:4002/api/ecomSys/book/search/${searchTerm}/`);
+        const response = await fetch('http://localhost:8007/api/search/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ keyword: searchTerm })
+        });
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
         const data = await response.json();
-        console.log('data', data)
+        console.log('data', data);
         setSearchResults(data);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
     }
   };
+  
 
   const handleDeleteCate = async (id) => {
     // setOpen(true);
@@ -154,6 +162,7 @@ const fetchData = async () => {
   const [open, setOpen] = React.useState(false);
   const [bookDetail, setBookDetail]= useState();
   const handleOpen = async (id) => {
+    setCount(0);
     setTypeProduct("book");
     setOpen(true);
     setIdProduct(id);
@@ -177,6 +186,7 @@ const fetchData = async () => {
   const [open1, setOpen1] = React.useState(false);
   const [bookDetail1, setBookDetail1]= useState();
   const handleOpen1 = async (id) => {
+    setCount(0);
     setOpen1(true);
     setTypeProduct("clothes")
     setIdProduct(id);
@@ -241,6 +251,7 @@ const fetchDataBranch1 = async () => {
     const [open2, setOpen2] = React.useState(false);
     const [bookDetail2, setBookDetail2]= useState();
     const handleOpen2 = async (id) => {
+      setCount(0);
       setOpen2(true);
       setTypeProduct("mobiles");
       setIdProduct(id);
@@ -262,12 +273,16 @@ const fetchDataBranch1 = async () => {
     const handleTru = () =>{
       if(count>=1){
         setCount(count-1);
+        console.log('count', count);
       }
     }
 
     const handleCong = () =>{
       setCount(count+1);
+      console.log('count', count);
     }
+
+   
 
     const handleAddtoCart = async() =>{
       const accessToken = localStorage.getItem('accessToken');
@@ -299,6 +314,7 @@ const fetchDataBranch1 = async () => {
   return (
     <Box style={{
       backgroundColor:'#F7EEDD',
+      minHeight: 1000,
       height: 'auto',
       paddingBottom: 100
     }}>
@@ -331,16 +347,33 @@ const fetchDataBranch1 = async () => {
         justifyContent: 'center',
         flexWrap: 'wrap'
       }}>
-      {searchResults ? (
-        searchResults.map((book, index) => (
-        <Box style={{
-          marginTop: 50,
-          marginRight: 30,
-        }}>
+      { searchTerm && searchResults ? (
+        <Box>
+          {
+            searchResults.books.map((book, index) => (
+        
         <CardProduct book ={book}
         handleDeleteCate={handleDeleteCate}></CardProduct>
-        </Box>
+        
       ))
+          }
+          {
+            searchResults.clothes.map((book, index) => (
+       
+        <ClothesCard book ={book}
+        handleDeleteCate={handleDeleteCate}></ClothesCard>
+       
+      ))
+          }
+          {
+            searchResults.mobiles.map((book, index) => (
+       
+        <CardMobile book ={book}
+        handleDeleteCate={handleDeleteCate}></CardMobile>
+       
+      ))
+          }
+        </Box>
       ): searchTerm ==='' ? (
         <Box style={{
         display: 'flex',
@@ -523,12 +556,40 @@ const fetchDataBranch1 = async () => {
           Category:{getNameById(dataCate, bookDetail1.category )}
         </Typography>
       </CardContent>
-      <CardActions>
+      {role==="manager" && (
+        <CardActions>
         <Button size="small">Edit</Button>
         <Button size="small">Delete</Button>
       </CardActions>
+      )}
     </Card>
           )}
+
+          <Box style={{
+            display: 'flex',
+            justifyContent: 'flex-end',
+            marginTop: 20,
+            marginRight: 30,
+          }}>
+          <Button onClick={handleTru}>-</Button>
+          <Typography  style={{
+            marginTop: 5,
+            paddingLeft: 15,
+            paddingRight: 15
+          }}>{count}</Typography>
+          <Button onClick={handleCong}>+</Button>
+          </Box>
+       <Box style={{
+        display: 'flex',
+        justifyContent: 'center'
+       }}>
+       {role==="user" && (
+        <CardActions>
+        <Button size="small" onClick={handleAddtoCart}>Add to Cart</Button>
+        <Button size="small">Purchase</Button>
+      </CardActions>
+      )}
+       </Box>
         
         </Box>
       </Modal>
@@ -576,12 +637,40 @@ const fetchDataBranch1 = async () => {
           Branch: {getNameById(dataBranch1, bookDetail2.branch )}
         </Typography>
       </CardContent>
-      <CardActions>
+      {role==="manager" && (
+        <CardActions>
         <Button size="small">Edit</Button>
         <Button size="small">Delete</Button>
       </CardActions>
+      )}
     </Card>
           )}
+
+          <Box style={{
+            display: 'flex',
+            justifyContent: 'flex-end',
+            marginTop: 20,
+            marginRight: 30,
+          }}>
+          <Button onClick={handleTru}>-</Button>
+          <Typography  style={{
+            marginTop: 5,
+            paddingLeft: 15,
+            paddingRight: 15
+          }}>{count}</Typography>
+          <Button onClick={handleCong}>+</Button>
+          </Box>
+       <Box style={{
+        display: 'flex',
+        justifyContent: 'center'
+       }}>
+       {role==="user" && (
+        <CardActions>
+        <Button size="small" onClick={handleAddtoCart}>Add to Cart</Button>
+        <Button size="small">Purchase</Button>
+      </CardActions>
+      )}
+       </Box>
         
         </Box>
       </Modal>

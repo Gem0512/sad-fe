@@ -11,7 +11,7 @@ export default function Category_Branch() {
 const [dataBranch, setDataBranch] = useState();
 const fetchData = async () => {
       try {
-        const response = await fetch('http://localhost:8003/api/branchs/');
+        const response = await fetch('http://localhost:8003/api/producers/');
         const responseData = await response.json();
         setDataBranch(responseData);
         console.log(responseData);
@@ -23,7 +23,7 @@ const fetchData = async () => {
     const [dataCate, setDataCate] = useState();
 const fetchData1 = async () => {
       try {
-        const response = await fetch('http://localhost:8003/api/categories/');
+        const response = await fetch('http://localhost:8003/api/styles/');
         const responseData = await response.json();
         setDataCate(responseData);
         console.log(responseData);
@@ -50,7 +50,7 @@ const fetchData1 = async () => {
 
       <Box >
       <Typography>
-        BRANCH
+      PRODUCERS
       </Typography>
       {
         dataBranch && dataBranch.map((branch, index) => (
@@ -91,7 +91,7 @@ const fetchData1 = async () => {
 
       <Box>
       <Typography>
-        CATEGORIES
+        STYLES
       </Typography>
       {
         dataCate && dataCate.map((branch, index) => (

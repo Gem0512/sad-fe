@@ -41,7 +41,7 @@ export default function ClothesCard({book, handleDeleteCate, handleOpen, handleO
         display:'flex',
         justifyContent: 'flex-end'
       }}>
-        <Button size="small" onClick={()=>{handleOpen(book.id)}}>Detail</Button>
+        {/* <Button size="small" onClick={()=>{handleOpen(book.id)}}>Detail</Button> */}
        {role ===" manager" && (
         <Box>
         <Button size="small" onClick={()=>{handleOpen1(book.id)}}>Edit</Button>
@@ -50,7 +50,7 @@ export default function ClothesCard({book, handleDeleteCate, handleOpen, handleO
        )}
         {
             role === 'user' && (
-                <Button size="small" onClick ={()=>{handleOpen1(book.id)}}>
+                <Button size="small" onClick ={()=>{handleOpen(book.id)}}>
                     <AddShoppingCartIcon></AddShoppingCartIcon>
                 </Button>
             )

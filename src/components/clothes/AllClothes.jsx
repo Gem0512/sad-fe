@@ -125,7 +125,9 @@ const fetchData = async () => {
   
   const [open, setOpen] = React.useState(false);
   const [bookDetail, setBookDetail]= useState();
+  const [idProduct, setIdProduct] =useState();
   const handleOpen = async (id) => {
+    setIdProduct(id);
     setOpen(true);
     console.log(id);
     try {
@@ -211,7 +213,7 @@ const fetchData = async () => {
 const [dataBranch, setDataBranch] = useState();
 const fetchDataBranch = async () => {
       try {
-        const response = await fetch('http://localhost:8003/api/branchs/');
+        const response = await fetch('http://localhost:8003/api/producers/');
         const responseData = await response.json();
         setDataBranch(responseData);
         console.log(responseData);
@@ -223,7 +225,7 @@ const fetchDataBranch = async () => {
     const [dataCate, setDataCate] = useState();
 const fetchDataCate = async () => {
       try {
-        const response = await fetch('http://localhost:8003/api/categories/');
+        const response = await fetch('http://localhost:8003/api/styles/');
         const responseData = await response.json();
         setDataCate(responseData);
         console.log(responseData);
@@ -232,11 +234,56 @@ const fetchDataCate = async () => {
       }
     };
 
-  function getNameById(input, id) {
+  function getStyleById(input, id) {
     const item = input.find(item => item.id === id);
-    return item ? item.name : 'Unknown';
+    return item ? item.styles : 'Unknown';
 }
 
+function getProducerById(input, id) {
+  const item = input.find(item => item.id === id);
+  return item ? item.producer : 'Unknown';
+}
+
+const [count, setCount] = useState(0);
+const handleTru = () =>{
+  if(count>=1){
+    setCount(count-1);
+    console.log('count', count);
+  }
+}
+
+const handleCong = () =>{
+  setCount(count+1);
+  console.log('count', count);
+}
+const role = localStorage.getItem('role');
+const handleAddtoCart = async() =>{
+  const accessToken = localStorage.getItem('accessToken');
+  try {
+      const response = await fetch('http://127.0.0.1:8006/api/add-to-cart/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`
+        },
+        body: JSON.stringify({
+          quantity: count,
+        product_id: idProduct,
+        product_type: 'clothes',
+        })
+      });
+  
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+  
+      const responseData = await response.json();
+      console.log('Product added successfully to cart:', responseData);
+        alert("Thêm vào giỏ hàng thành công thành công!")
+    } catch (error) {
+      console.error('Error adding product:', error);
+    }
+}
   return (
     <Box style={{
       backgroundColor:'#F7EEDD',
@@ -309,13 +356,14 @@ const fetchDataCate = async () => {
       >
 
         <Box sx={style}>
+        <Typography>aaaaaaaaa</Typography>
           {bookDetail && (
             <Card sx={{ maxWidth: 600, minWidth: 800 }}>
       <CardMedia
         component="img"
         alt="green iguana"
         height="350"
-        image= "https://dongphuc.dony.vn/wp-content/uploads/2021/02/ao-thun-tay-dai-nu-6.jpg"
+        image= {bookDetail.image_base64}
       />
       <CardContent>
         <Typography gutterBottom variant="h5" component="div" style={{
@@ -341,20 +389,49 @@ const fetchDataCate = async () => {
         <Typography variant="body2" color="text.secondary" style={{
           marginBottom: 10
         }}>
-          Branch: {getNameById(dataBranch, bookDetail.branch )}
+          Producer: {getProducerById(dataBranch, bookDetail.producers )}
         </Typography>
         <Typography variant="body2" color="text.secondary" style={{
           marginBottom: 10
         }}>
-          Category:{getNameById(dataCate, bookDetail.category )}
+          Style:{getStyleById(dataCate, bookDetail.style )}
         </Typography>
       </CardContent>
-      <CardActions>
+      {role==="manager" && (
+        <CardActions>
         <Button size="small">Edit</Button>
         <Button size="small">Delete</Button>
       </CardActions>
+      )}
     </Card>
           )}
+
+          <Box style={{
+            display: 'flex',
+            justifyContent: 'flex-end',
+            marginTop: 20,
+            marginRight: 30,
+          }}>
+          <Button onClick={handleTru}>-</Button>
+          <Typography  style={{
+            marginTop: 5,
+            paddingLeft: 15,
+            paddingRight: 15
+          }}>{count}</Typography>
+          <Button onClick={handleCong}>+</Button>
+          </Box>
+       <Box style={{
+        display: 'flex',
+        justifyContent: 'center'
+       }}>
+       {role==="user" && (
+        <CardActions>
+        <Button size="small" onClick={handleAddtoCart}>Add to Cart</Button>
+        <Button size="small">Purchase</Button>
+      </CardActions>
+      )}
+       </Box>
+        
         
         </Box>
       </Modal>

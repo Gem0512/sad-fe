@@ -23,7 +23,7 @@ export default function AddBranch() {
         console.log("formData", formData)
         const accessToken = localStorage.getItem('accessToken');
         try {
-            const response = await fetch('http://localhost:8003/api/branchs/', {
+            const response = await fetch('http://localhost:8003/api/producers/', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
@@ -43,7 +43,7 @@ export default function AddBranch() {
                 address: '',
                 email: ''
               });
-              alert("Thêm Chi nhánh thành công!")
+              alert("Thêm producer thành công!")
           } catch (error) {
             console.error('Error adding book:', error);
           }
@@ -65,7 +65,7 @@ export default function AddBranch() {
         marginTop: 30,
         color:'#008DDA',
         fontWeight: 'bold'
-      }}>Thêm branch</Typography>
+      }}>Thêm producer</Typography>
       <Box style={{
         // width:400,
         // maxWidth: 500,

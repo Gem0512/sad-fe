@@ -121,8 +121,10 @@ const [data, setData] = useState();
 
   const [open, setOpen] = React.useState(false);
   const [bookDetail, setBookDetail]= useState();
+  const [idProduct, setIdProduct] =useState();
   const handleOpen = async (id) => {
     setOpen(true);
+    setIdProduct(id);
     console.log(id);
     try {
       const response = await fetch(`http://localhost:8002/api/books/${id}/`);
@@ -206,7 +208,46 @@ const [data, setData] = useState();
         });
   };
   const role = localStorage.getItem('role');
+  const [count, setCount] = useState(0);
+  const handleTru = () =>{
+    if(count>=1){
+      setCount(count-1);
+      console.log('count', count);
+    }
+  }
 
+  const handleCong = () =>{
+    setCount(count+1);
+    console.log('count', count);
+  }
+
+  const handleAddtoCart = async() =>{
+    const accessToken = localStorage.getItem('accessToken');
+    try {
+        const response = await fetch('http://127.0.0.1:8006/api/add-to-cart/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`
+          },
+          body: JSON.stringify({
+            quantity: count,
+          product_id: idProduct,
+          product_type: 'book',
+          })
+        });
+    
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+    
+        const responseData = await response.json();
+        console.log('Product added successfully to cart:', responseData);
+          alert("Thêm vào giỏ hàng thành công thành công!")
+      } catch (error) {
+        console.error('Error adding product:', error);
+      }
+  }
   return (
     <Box style={{
       backgroundColor:'#F7EEDD',
@@ -246,7 +287,7 @@ const [data, setData] = useState();
         justifyContent: 'center',
         flexWrap: 'wrap'
       }}>
-      {searchResults ? (
+      {searchResults && searchTerm ? (
         searchResults.map((book, index) => (
         <Box style={{
           marginTop: 50,
@@ -254,9 +295,9 @@ const [data, setData] = useState();
         }}>
         <ImgMediaCard 
         book ={book}
-        handleOpen={handleOpen}
+        handleOpen={handleOpen1}
         handleDeleteBook={handleDeleteBook}
-        handleOpen1={handleOpen1}
+        // handleOpen1={handleOpen1}
         ></ImgMediaCard>
         </Box>
       ))
@@ -288,13 +329,13 @@ const [data, setData] = useState();
       >
 
         <Box sx={style}>
-          {bookDetail && (
+        {bookDetail && (
             <Card sx={{ maxWidth: 600, minWidth: 800 }}>
       <CardMedia
         component="img"
         alt="green iguana"
         height="140"
-        image= "https://media-cdn-v2.laodong.vn/storage/newsportal/2023/8/26/1233821/Giai-Nhi-1--Nang-Tre.jpg"
+        image= {bookDetail.image_base64}
       />
       <CardContent>
         <Typography gutterBottom variant="h5" component="div" style={{
@@ -305,7 +346,7 @@ const [data, setData] = useState();
         <Typography variant="body2" color="text.secondary" style={{
           marginBottom: 10
         }}>
-          Author: {bookDetail.author}
+          Author: {bookDetail.author.name}
         </Typography>
         <Typography variant="body2" color="text.secondary" style={{
           marginBottom: 10
@@ -325,7 +366,12 @@ const [data, setData] = useState();
         <Typography variant="body2" color="text.secondary" style={{
           marginBottom: 10
         }}>
-          Sale: {bookDetail.sale}
+          Category: {bookDetail.category.name}
+        </Typography>
+        <Typography variant="body2" color="text.secondary" style={{
+          marginBottom: 10
+        }}>
+          Publisher: {bookDetail.publisher.name}
         </Typography>
       </CardContent>
       {role==="manager" && (
@@ -336,6 +382,32 @@ const [data, setData] = useState();
       )}
     </Card>
           )}
+
+          <Box style={{
+            display: 'flex',
+            justifyContent: 'flex-end',
+            marginTop: 20,
+            marginRight: 30,
+          }}>
+          <Button onClick={handleTru}>-</Button>
+          <Typography  style={{
+            marginTop: 5,
+            paddingLeft: 15,
+            paddingRight: 15
+          }}>{count}</Typography>
+          <Button onClick={handleCong}>+</Button>
+          </Box>
+       <Box style={{
+        display: 'flex',
+        justifyContent: 'center'
+       }}>
+       {role==="user" && (
+        <CardActions>
+        <Button size="small" onClick={handleAddtoCart}>Add to Cart</Button>
+        <Button size="small">Purchase</Button>
+      </CardActions>
+      )}
+       </Box>
         
         </Box>
       </Modal>

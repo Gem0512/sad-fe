@@ -71,7 +71,7 @@ function Header() {
                         </Button>
                         <Menu {...bindMenu(popupState)}>
                           <MenuItem component={Link} to="/allclothes"  onClick={popupState.close}>All clothes</MenuItem>
-                          <MenuItem component={Link} to="/cate&branch"  onClick={popupState.close}>Category & Branch </MenuItem>
+                          <MenuItem component={Link} to="/cate&branch"  onClick={popupState.close}>Producers & Styles </MenuItem>
                         </Menu>
                       </React.Fragment>
                     )}
@@ -86,7 +86,7 @@ function Header() {
                         </Button>
                         <Menu {...bindMenu(popupState)}>
                           <MenuItem component={Link} to="/allmobiles"  onClick={popupState.close}>All mobiles</MenuItem>
-                          <MenuItem component={Link} to="/allbranchmobile"  onClick={popupState.close}>All branch mobile</MenuItem>
+                          <MenuItem component={Link} to="/allbranchmobile"  onClick={popupState.close}>Producers & Types</MenuItem>
                         </Menu>
                       </React.Fragment>
                     )}
@@ -111,10 +111,11 @@ function Header() {
                     <MenuItem component={Link} to="/addbookauthor"  onClick={popupState.close}>Add book author</MenuItem>
                     <MenuItem component={Link} to="/addbookpublisher"  onClick={popupState.close}>Add book publisher</MenuItem>
                     <MenuItem component={Link} to="/addclothes"  onClick={popupState.close}>Add clothes</MenuItem>
-                    <MenuItem component={Link} to="/addclothescategory"  onClick={popupState.close}>Add clothes category</MenuItem>
-                    <MenuItem component={Link} to="/addclothesbranch"  onClick={popupState.close}>Add clothes branch</MenuItem>
+                    <MenuItem component={Link} to="/addclothescategory"  onClick={popupState.close}>Add clothes styles</MenuItem>
+                    <MenuItem component={Link} to="/addclothesbranch"  onClick={popupState.close}>Add clothes producer</MenuItem>
                     <MenuItem component={Link} to="/addmobile"  onClick={popupState.close}>Add mobile</MenuItem>
-                    <MenuItem component={Link} to="/addmobilebranch"  onClick={popupState.close}>Add mobile branch</MenuItem>
+                    <MenuItem component={Link} to="/addmobilebranch"  onClick={popupState.close}>Add mobile producer</MenuItem>
+                    <MenuItem component={Link} to="/addtypemobile"  onClick={popupState.close}>Add mobile type</MenuItem>
                   </Menu>
                 </React.Fragment>
               )}

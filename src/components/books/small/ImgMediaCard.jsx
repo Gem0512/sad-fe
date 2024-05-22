@@ -56,7 +56,7 @@ export default function ImgMediaCard({book, handleOpen, handleDeleteBook, handle
         display:'flex',
         justifyContent: 'flex-end'
       }}>
-        <Button size="small" onClick={()=>{handleOpen(book.id)}}>Detail</Button>
+        {/* <Button size="small" onClick={()=>{handleOpen(book.id)}}>Detail</Button> */}
        {role ===" manager" && (
         <Box>
         <Button size="small" onClick={()=>{handleOpen1(book.id)}}>Edit</Button>
@@ -65,7 +65,7 @@ export default function ImgMediaCard({book, handleOpen, handleDeleteBook, handle
        )}
         {
             role === 'user' && (
-                <Button size="small" onClick ={()=>{handleOpen1(book.id)}}>
+                <Button size="small" onClick ={()=>{handleOpen(book.id)}}>
                     <AddShoppingCartIcon></AddShoppingCartIcon>
                 </Button>
             )

@@ -26,7 +26,7 @@ export default function AddBranchMobile() {
         console.log("formData", formData)
         const accessToken = localStorage.getItem('accessToken');
         try {
-            const response = await fetch('http://localhost:8005/api/branchs/', {
+            const response = await fetch('http://localhost:8005/api/producers/', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',

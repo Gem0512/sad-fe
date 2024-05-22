@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import Header from '../Header';
 
 
-export default function AddCategoryClothes() {
+export default function TypeMobile() {
     const [formData, setFormData] = useState({
         // category_id: '',
         name:'',
@@ -23,7 +23,7 @@ export default function AddCategoryClothes() {
         console.log("formData", formData)
         const accessToken = localStorage.getItem('accessToken');
         try {
-            const response = await fetch('http://localhost:8003/api/styles/', {
+            const response = await fetch('http://localhost:8005/api/types/', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
@@ -42,7 +42,7 @@ export default function AddCategoryClothes() {
               name:'',
               des: ''
               });
-              alert("Thêm styles thành công!")
+              alert("Thêm type thành công!")
           } catch (error) {
             console.error('Error adding book:', error);
           }
@@ -64,7 +64,7 @@ export default function AddCategoryClothes() {
         marginTop: 30,
         color:'#008DDA',
         fontWeight: 'bold'
-      }}>Thêm Styles</Typography>
+      }}>Thêm type</Typography>
       <Box style={{
         // width:400,
         // maxWidth: 500,

@@ -1,4 +1,4 @@
-import { Box, Button, InputBase, TextField, Typography, alpha, styled } from '@mui/material';
+import { Box, Button, FormControl, Input, InputBase, InputLabel, MenuItem, Select, TextField, Typography, alpha, styled } from '@mui/material';
 import React, { useEffect, useState } from 'react'
 import Header from '../Header';
 import SearchIcon from '@mui/icons-material/Search';
@@ -14,18 +14,32 @@ export default function AddBook() {
         quantity: '',
         des: '',
         category: '',
-        publisher: ''
+        publisher: '',
+        image:''
       });
     
       const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
+        const { name, value, files } = e.target;
+        const intFields = ['author', 'quantity', 'category', 'publisher'];
+        let parsedValue = value;
+
+        if (name === 'image') {
+          parsedValue = files[0]; // Handle file input for image
+        } else if (intFields.includes(name)) {
+          parsedValue = parseInt(value, 10);
+        } else if (name === 'price') {
+          parsedValue = parseFloat(value);
+        }
+
+        setFormData({ ...formData, [name]: parsedValue });
+
+        console.log(name, value)
       }; 
       const handleSubmit = async (e) => {
         e.preventDefault();
         const accessToken = localStorage.getItem('accessToken');
 
-        console.log('formData', formData.title);
+        console.log('formData', formData);
 
         const config = {     
             headers: { 
@@ -54,6 +68,53 @@ export default function AddBook() {
       };
 
   
+      const [dataCate, setDataCate] = useState();
+      useEffect(() => {
+        
+        fetchDataAuthor()
+        fetchData();
+        fetchData1()
+        
+      }, []);
+    const fetchData = async () => {
+          try {
+            const response = await fetch('http://localhost:8002/api/categories/');
+            const responseData = await response.json();
+            setDataCate(responseData);
+            console.log(responseData);
+          } catch (error) {
+            console.error('Error fetching data:', error);
+          }
+        };
+
+        const [dataPub, setDataPub] = useState();
+        const fetchData1 = async () => {
+              try {
+                const response = await fetch('http://localhost:8002/api/publishers/');
+                const responseData = await response.json();
+                setDataPub(responseData);
+                console.log(responseData);
+              } catch (error) {
+                console.error('Error fetching data:', error);
+              }
+            };
+
+            const [dataAuthor, setDataAuthor] = useState();
+    const fetchDataAuthor = async () => {
+      try {
+        const response = await fetch('http://localhost:8002/api/authors/');
+        const responseData = await response.json();
+        setDataAuthor(responseData);
+        console.log(responseData);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+            // const [cate, setCate] = React.useState('');
+
+  // const handleChangeCate = (event) => {
+  //   setCate(event.target.value);
+  // };
 
   return (
     <Box style={{
@@ -95,7 +156,7 @@ export default function AddBook() {
         onChange={handleChange}
         margin="normal"
       />
-      <TextField
+      {/* <TextField
         fullWidth
         label="Author"
         variant="outlined"
@@ -106,7 +167,28 @@ export default function AddBook() {
         value={formData.author}
         onChange={handleChange}
         margin="normal"
-      />
+      /> */}
+
+<FormControl fullWidth margin="normal">
+        <InputLabel id="demo-simple-select-label">Author</InputLabel>
+        <Select
+          labelId="demo-simple-select-label"
+          id="demo-simple-select"
+          value={formData.author}
+          name ='author'
+          style={{
+                backgroundColor: 'white',
+            }}
+          label="Author"
+          onChange={handleChange}
+        >
+        {
+          dataAuthor && dataAuthor.map(cate => (
+            <MenuItem value={cate.id}>{cate.name}</MenuItem>
+          ))
+        }
+        </Select>
+      </FormControl>
       <TextField
         fullWidth
         label="Price"
@@ -147,32 +229,60 @@ export default function AddBook() {
         onChange={handleChange}
         margin="normal"
       />
-      <TextField
-        style={{
+      <FormControl fullWidth margin="normal">
+        <InputLabel id="demo-simple-select-label">Category</InputLabel>
+        <Select
+          labelId="demo-simple-select-label"
+          id="demo-simple-select"
+          value={formData.category}
+          name ='category'
+          style={{
                 backgroundColor: 'white',
             }}
-        fullWidth
-        label="Category ID"
-        type="number"
-        variant="outlined"
-        name="category"
-        value={formData.category_id}
-        onChange={handleChange}
-        margin="normal"
-      />
-       <TextField
-        style={{
+          label="Category"
+          onChange={handleChange}
+        >
+        {
+          dataCate && dataCate.map(cate => (
+            <MenuItem value={cate.id}>{cate.name}</MenuItem>
+          ))
+        }
+        </Select>
+      </FormControl>
+      <FormControl fullWidth margin="normal">
+        <InputLabel id="demo-simple-select-label">Publisher</InputLabel>
+        <Select
+          labelId="demo-simple-select-label"
+          id="demo-simple-select"
+          name ='publisher'
+          value={formData.publisher}
+          style={{
                 backgroundColor: 'white',
             }}
-        fullWidth
-        label="Publisher ID"
-        variant="outlined"
-        type="number"
-        name="publisher"
-        value={formData.category_id}
-        onChange={handleChange}
-        margin="normal"
-      />
+          label="Publisher"
+          onChange={handleChange}
+        >
+        {
+          dataPub && dataPub.map(cate => (
+            <MenuItem value={cate.id}>{cate.name}</MenuItem>
+          ))
+        }
+        </Select>
+      </FormControl>
+        
+      <FormControl variant="standard" margin ="normal">
+        <InputLabel htmlFor="image-input">
+          Chọn hình ảnh
+        </InputLabel>
+        <Input
+          id="image-input"
+          name="image"
+          type="file"
+          onChange={handleChange}
+        />
+      </FormControl>
+
+
       <Button 
       style={{
         marginTop: 20,

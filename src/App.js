@@ -23,6 +23,7 @@ import AllBranchMobile from './components/mobiles/AllBranchMobile';
 import Author_Publisher from './components/books/Author_Publisher';
 import Profile from './components/user/Profile';
 import Cart from './components/cart/Cart';
+import TypeMobile from './components/mobiles/TypeMobiles';
 
 function App() {
   return (
@@ -54,6 +55,7 @@ function App() {
       <Route path="/author&publisher" element={<Author_Publisher />} />
       <Route path="/profile" element={<Profile />} />
       <Route path="/cart" element={<Cart />} />
+      <Route path="/addtypemobile" element={<TypeMobile />} />
       </Routes>
     </Router>
   );
